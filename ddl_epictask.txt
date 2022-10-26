@@ -1,0 +1,25 @@
+create table task (
+	id number(19,0) generated as identity, 
+	description varchar2(255 char), 
+	score number(10,0) not null check (score>=1), 
+	status number(10,0) not null, 
+	title varchar2(255 char), primary key (id)
+)
+create table tb_role (
+	id number(19,0) generated as identity, 
+	name varchar2(255 char), 
+	primary key (id)
+)
+create table tb_user (
+	id number(19,0) generated as identity, 
+	email varchar2(255 char), 
+	name varchar2(255 char), 
+	password varchar2(255 char), 
+	primary key (id)
+)
+create table tb_user_roles (
+	user_id number(19,0) not null, 
+	roles_id number(19,0) not null
+)
+alter table tb_user_roles add constraint FK1vtq78sjf399g49sd0voq05c0 foreign key (roles_id) references tb_role
+alter table tb_user_roles add constraint FK19t64ocsol5x06fy2cytp7gey foreign key (user_id) references tb_user

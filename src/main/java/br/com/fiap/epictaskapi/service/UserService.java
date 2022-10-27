@@ -1,5 +1,6 @@
 package br.com.fiap.epictaskapi.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,11 @@ public class UserService {
     UserRepository repository;
 
     public Page<User> listAll(Pageable pageable){
-        
        return repository.findAll(pageable);
+    }
+
+    public List<User> listAll(){
+        return repository.findAll();
     }
 
     public void save(User user) {

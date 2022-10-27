@@ -9,7 +9,6 @@
 </head>
 <body>
     <h1>Epic Task</h1>
-
     <nav>
         <ul>
             <li><a href="/task">pendentes</a></li>
@@ -19,14 +18,13 @@
     </nav>
 
     <div class="toolbar">
-        <a class="button primary" href="/task/new">cadastrar tarefa</a>
+        <a class="button primary" href="/user/new">cadastrar usuário</a>
     </div>
 
     <main class="cards">
-        <div class="card" th:each="task : ${tasks}">
-            <h2 th:text="${task.title}"/>
-            <span th:text="${task.status} + '%'"/>
-            <span th:text="${task.score + 'pts'}"/>
+        <div class="card" th:each="user : ${users}">
+            <h2 th:text="${user.name}"/>
+            <h2 th:text="${user.email}"/>
         </div>
     </main>
 

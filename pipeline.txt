@@ -1,0 +1,39 @@
+node {
+def resourceGroupName = 'rg-epictask'
+def resourceGroupLocation = 'brazilsouth'
+def appServicePlanName = 'epictaskPlan'
+def appServicePlanTier = 'FREE'
+def webAppName = 'dimdimnaweb'
+def webAppRuntime = '"java:17:Java SE:17"'
+def packagePath = 'epictaskapi-0.0.1-SNAPSHOT.jarr'
+stage('Extrair Codigo Fonte') {
+    echo 'Obtendo o Código Fonte ...'
+    checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
+    userRemoteConfigs: [[url: 'https://github.com/isabelabianca/epictask-dimdim.git']]])
+}
+stage('Build') {
+    echo 'Empacotando o projeto...'
+    bat 'mvn clean install'
+}
+stage('Credenciais Azure') {
+    echo 'Obtendo credenciais...'
+    withCredentials([usernamePassword(credentialsId: 'AzureService', passwordVariable: 'AZURE_CLIENT_SECRET', usernameVariable: 'AZURE_CLIENT_ID')]) {
+        echo 'Logando na Azure...'
+        bat 'az login -u isa_bianca@hotmail.com -p $AZURE_CLIENT_SECRET'
+    }
+}
+stage('Criar Infra') {
+    echo 'Criando o Grupo de Recursos...'
+    bat "az group create --name $resourceGroupName --location $resourceGroupLocation"
+    echo 'Criando Plano de Serviço...'
+    bat "az appservice plan create --name $appServicePlanName --resource-group $resourceGroupName --sku $appServicePlanTier"
+    echo 'Criando o Web App...'
+    bat "az webapp create --name $webAppName --plan $appServicePlanName --resource-group $resourceGroupName --runtime $webAppRuntime"
+}
+stage('Deploy') {
+    echo 'Realizando o Deploy na Azure...'
+    bat "az webapp deploy --resource-group $resourceGroupName --name $webAppName --src-path $packagePath --type jar"
+}
+}
+
+        bat 'az login -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID'
